@@ -1,0 +1,26 @@
+﻿@inherits LayoutComponentBase
+
+<style>
+    .divBlazorAgile{
+        background-color:rgb(247,247,247);
+        height: 100vh;
+        overflow:hidden;
+    }
+
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+</style>
+
+<div class="page divBlazorAgile">
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<BlazoredToasts 
+Timeout=3
+ShowProgressBar=true 
+Position="Blazored.Toast.Configuration.ToastPosition.BottomRight"/>

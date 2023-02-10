@@ -1,0 +1,77 @@
+﻿@using System.ComponentModel
+@inject IJSRuntime JS;
+@if (Show)
+{
+
+    <div class="modal-backdrop show"></div>
+
+    <div id="openModalRecaptcha" class="modal fade" style=" overflow-y:auto" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="width:500px; height:250px; margin-left:200px;">
+                <div class="modal-header">
+                    <button type="button" class="close" onclick="closeModalRecaptcha();">&times;</button>
+                    <h4 id="modal-header-text" class="modal-title">Por favor, selecione o campo abaixo</h4>
+                </div>
+                <div id="captchaNull" class="alert alert-danger" hidden>
+                    <label>Responda o captcha!</label>
+                </div>
+                <div>
+                    <div id="recaptcha_container"></div>
+                    <input type="submit" id="buttonLoginValidate" value="Confirmar" onclick="callBackForm()" style="margin-left: 100px;" disabled />
+                    <input type="submit" id="buttonLoginCancel" value="Cancelar" onclick="closeModalRecaptcha()" style="margin-left:5px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" class="btn btn-primary" @onclick="(()=> onLogin.InvokeAsync())">Show Response</button>
+
+    <br />
+
+    @reCAPTCHA_response
+
+}
+@code {
+    private int WidgetId;
+
+    [Parameter] public bool Show { get; set; } = false;
+
+    [Parameter] public EventCallback<Index> onLogin { get; set; }
+
+    [Parameter] public string key { get; set; }
+
+    public string reCAPTCHA_response;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        //await JS.InvokeVoidAsync("loadScript", "https://www.google.com/recaptcha/api.js");
+
+        //await JS.InvokeVoidAsync("loadScript", "Scripts/JsOfReCAPTCHA.js");
+
+        if (firstRender)
+        {
+           // WidgetId = await JS.InvokeAsync<int>("render_recaptcha", DotNetObjectReference.Create(this), "recaptcha_container", "6Lf_rmckAAAAAIFXcwPmkCUQjS2hmgawBbXlvi0k");
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    public async void GetResponse()
+    {
+       // return await JS.InvokeAsync<string>("grecaptcha.getResponse");
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public void CallbackOnSuccess(string response)
+    {
+      //  reCAPTCHA_response = response;
+     //   Show = false;
+    }
+
+    [JSInvokable, EditorBrowsable(EditorBrowsableState.Never)]
+    public void CallbackOnExpired()
+    {
+        //...
+    }
+
+}

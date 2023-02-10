@@ -1,0 +1,48 @@
+﻿@using System.Text.Json
+@inject HttpClient http
+<style>
+    #container-image {
+        background: no-repeat center center;
+        background-size: 25%;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        width:100vw;
+        height: 100vh;
+    }
+</style>
+
+@*<div style="width:100vw;height: 100vh;display: flex;flex-direction: row;justify-content: center;align-items: center;">
+    <img src="../images/vitaseg.png" style="width:500px;height:500px">
+</div>*@
+
+<div id="container-image">
+    <img src="@imageReturn">
+</div>
+
+
+@code {
+    private string? imageReturn { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        var httpResponse =
+            await http.GetAsync($"login");
+
+        var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+        var teste = JsonSerializer.Deserialize<ModelString>(responseString,
+                new JsonSerializerOptions()
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+        imageReturn = "data:image/png;base64," + teste.TextString;
+       
+
+        //httpResponse.Content
+    }
+}

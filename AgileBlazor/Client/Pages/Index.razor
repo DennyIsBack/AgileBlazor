@@ -1,0 +1,156 @@
+﻿@page "/"
+@using System.Text.Json
+@using AgileBlazor.Client.Shared.ReCAPTCHA
+@using static AgileBlazor.Shared.UserLogin
+@inject NavigationManager navigation
+@inject IToastService toastService
+@inject TokenAuthenticationProvider authStateProvider
+@inject IConfiguration configuration
+@inject HttpClient http
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../css/bootstrap/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<div>
+    <div id="header-content" class="fixed-top">
+        <div id="login">
+            <div class="logo-company">
+                <img src="../Images/logo_agile.png">
+            </div>
+            <div class="logo-company-text">
+                <div class="logo-company-text-app">
+                    Agile.MainApp
+                </div>
+                <div class="logo-company-text-company">
+                    by Agilework®
+                </div>
+            </div>
+        </div>
+        <EditForm Model="@user" OnValidSubmit="@onLogin">
+            <DataAnnotationsValidator />
+            <div class=" d-flex justify-content-end">
+                <table>
+                    <tr>
+                        <td class="login-company-td-label">
+                            <label class="LabelUser" form="usuario">Usuário:</label>
+                        </td>
+                        <td class="login-company-td-textbox input-group input-group-sm ">
+                            <InputText id="usuario" @bind-Value="user.User" class="form-control" style="text-transform: uppercase; height:30px;" name="User" placeholder="Usuário" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                        </td>
+                        <td class="login-company-td-label">
+                            <label form="password">Senha:</label>
+                        </td>
+                        <td class="login-company-td-textbox input-group input-group-sm">
+                            <InputText type="password" id="password" @bind-Value="user.Password" class="form-control" style="height:30px;" name="Password" placeholder="Senha" aria-describedby="sizing-addon3" />
+                        </td>
+                        <td class="login-company-td-button">
+                            <button type="submit" id="btnLogin" class="btn btn-default btn-login-img"></button>
+                        </td>
+                        <td class="login-company-td-button">
+                            <a onclick="@(()=> toastService.ShowInfo("AW.MainApp 1.9.8.7 \n Agile.MainApp 1.8.6.7"))" class="btn btn-default btn-help-img"></a>
+                        </td>
+                        <td class="login-company-td-button">
+                            <a href="http://www.agilework.com.br/" target="_blank" class="btn btn-default btn-agilework-img"></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td colspan="2">
+                            <ValidationMessage For="@(()=> user.User)" />
+                        </td>
+                        <td colspan="2">
+                            <ValidationMessage For="@(()=> user.Password)" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </EditForm>
+    </div>
+</div>
+<LogoLogin></LogoLogin>
+
+<ReCAPTCHA onLogin="onLogin" key="KeyReCAPTCHA" Show="@validOpenReCAPTCHA"></ReCAPTCHA>
+
+
+@code {
+    private int currentCount = 0;
+    private LoginViewModel user = new LoginViewModel();
+    private appSettings? configurationSettings = new appSettings();
+
+    private ReCAPTCHA captcha = new ReCAPTCHA();
+
+    private string? Username { get; set; }
+    private string? Password { get; set; }
+    private string? checkedMsg { get; set; }
+    private bool validCheck { get; set; }
+    private bool validOpenReCAPTCHA { get; set; } = false;
+    private string? KeyReCAPTCHA { get; set; }
+    private AuthenticationState authState { get; set; }
+    private string userName { get; set; }
+
+    public async Task ValidRecaptcha()
+    {
+        if (validOpenReCAPTCHA)
+        {
+            //  var pega = captcha.GetResponse();
+        };
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var retRequest =
+                await http.GetAsync($"login/getConfiguration");
+
+        if (retRequest.IsSuccessStatusCode)
+        {
+            var responseString = await retRequest.Content.ReadAsStringAsync();
+
+            configurationSettings = JsonSerializer.Deserialize<appSettings>(responseString);
+
+        }
+    }
+
+
+    private async Task onLogin()
+    {
+        try
+        {
+            var retRequest =
+                await http.PostAsJsonAsync($"login", user);
+
+            if (retRequest.IsSuccessStatusCode)
+            {
+                var retString = await retRequest.Content.ReadAsStringAsync();
+
+                var loginReturn = JsonSerializer.Deserialize<UserToken>(retString,
+                                  new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (loginReturn.Success)
+                {
+                    await authStateProvider.LoginSetStorage(loginReturn.Token);
+                    navigation.NavigateTo("workspace");
+                    toastService.ShowSuccess("Logado no sistema com sucesso !");
+                }
+                else toastService.ShowWarning($"{loginReturn.Token}");
+            }
+        }
+        catch (Exception)
+        {
+            toastService.ShowWarning("Não foi possível realizar o login");
+        }
+    }
+}

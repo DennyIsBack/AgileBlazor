@@ -1,0 +1,79 @@
+﻿@page "/logoff"
+@inject IToastService toastService
+@inject NavigationManager navigation
+@inject TokenAuthenticationProvider authStateProvider
+<style>
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+</style>
+<AuthorizeView Roles="LAB_LAUD">
+    <Authorized>
+        <div id="header-content" class="fixed-top">
+            <div id="login">
+                <div class="logo-company">
+                    <img src="../Images/logo_agile.png">
+                </div>
+                <div class="logo-company-text">
+                    <div class="logo-company-text-app">
+                        Agile.MainApp
+                    </div>
+                    <div class="logo-company-text-company">
+                        by Agilework®
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <table>
+                    <tr>
+                        <td class="login-company-td-label">
+                            <label class="LabelUser" form="usuario">Usuário:</label>
+                        </td>
+                        <td class="login-company-td-textbox input-group input-group-sm ">
+                            <input type="text" id="usuario" class="form-control" disabled @bind-value="@userName" style="text-transform: uppercase; height:30px;" name="User" aria-label="Small" aria-describedby="inputGroup-sizing-sm" />
+                        </td>
+                        <td class="login-company-td-button">
+                            <button type="button" @onclick="@quitScreen" id="btnLogin" class="btn btn-default btn-logoff-img"></button>
+                        </td>
+                        <td class="login-company-td-button">
+                            <a onclick="@(()=> toastService.ShowInfo("AW.MainApp 1.9.8.7 \n Agile.MainApp 1.8.6.7"))" class="btn btn-default btn-help-img"></a>
+                        </td>
+                        <td class="login-company-td-button">
+                            <a href="http://www.agilework.com.br/" target="_blank" class="btn btn-default btn-agilework-img"></a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <h1>Não autorizado</h1>
+    </NotAuthorized>
+</AuthorizeView>
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationState { get; set; }
+
+    private AuthenticationState authState { get; set; }
+    private string userName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        authState = await authenticationState;
+        userName = authState.User.Identity.Name;
+
+    }
+    async void quitScreen()
+    {
+        try
+        {
+            await authStateProvider.LogoutRemoveStorage();
+            navigation.NavigateTo("/");
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
+}

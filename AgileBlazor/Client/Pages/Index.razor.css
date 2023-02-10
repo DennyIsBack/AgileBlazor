@@ -1,0 +1,127 @@
+﻿.btn-help-img {
+    background-image: url("../images/icone_HELP.png");
+    background-size: 30px;
+    width: 30px;
+    height: 28px;
+}
+
+.btn-agilework-img {
+    background: url("../images/AGILEWORK.png");
+    background-size: 30px;
+    width: 30px;
+    height: 28px;
+}
+
+.btn-login-img {
+    background: url("../images/icone_LOGIN.png") no-repeat;
+    background-size: 30px;
+    width: 30px;
+    height: 28px;
+}
+
+c
+.g-recaptcha {
+    margin-left: 100px;
+    margin-top: 35px;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.fa-eye {
+    position: absolute;
+    top: 45%;
+    right: 12px;
+    cursor: pointer;
+    color: #6495ED;
+    z-index: 1000;
+}
+
+.login-company {
+    width: 620px;
+    float: right;
+}
+
+.login-company-td-button {
+    padding-right: 5px;
+    padding-top: 8px;
+}
+
+.login-company-td-label {
+    padding-right: 5px;
+    padding-top: 15px;
+}
+
+.login-company-td-textbox {
+    padding-right: 10px;
+    padding-top: 10px;
+}
+
+.logoff-company {
+    width: 390px;
+    float: right;
+}
+
+.logoff-company-td-button {
+    padding-right: 5px;
+    padding-top: 8px;
+}
+
+.logoff-company-td-label {
+    padding-right: 5px;
+    padding-top: 15px;
+}
+
+.logoff-company-td-textbox {
+    padding-right: 10px;
+    padding-top: 10px;
+}
+
+.logo-company-text {
+    float: left;
+    padding-top: 5px;
+    padding-left: 10px;
+}
+
+.logo-company-text-app {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.logo-company-text-company {
+    text-align: center;
+    font-size: 12px;
+}
+
+.logo-company {
+    float: left;
+    margin-left: 20px;
+}
+
+    .logo-company img {
+        width: 50px;
+        height: 50px;
+    }
+
+
+.navbar.custom {
+    width: 100%;
+    height: 60px;
+    margin: 0 auto;
+    background-color: rgb(211,211,211);
+}
+
+.LabelUser {
+    font-size: 14px;
+}
+
+#header-content {
+    float: left;
+    min-width: 990px;
+    height: 50px;
+    min-height: 50px;
+    background-color: lightgray;
+    width: 100vw;
+}
